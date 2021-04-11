@@ -4,7 +4,10 @@
   "description": "Leninardo bot",
   "main": "dist/index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "npm run build && node dist/index.js",
+    "build": "rimraf ./dist && tsc",
+    "dev": "nodemon src/index.ts"
   },
   "author": "Makeli <joel.m.maenpaa@gmail.com>",
   "license": "MIT",

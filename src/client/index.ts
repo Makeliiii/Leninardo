@@ -1,10 +1,15 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from "discord-akairo";
 import { join } from "path";
 
-export class LeninardoClient extends AkairoClient {
-  public constructor(ownerID: string, token: string) {
-    super({ ownerID });
-    this.token = token;
+interface LeninardoOpts {
+  ownerID?: string;
+  token?: string;
+}
+
+export default class LeninardoClient extends AkairoClient {
+  public constructor(opts: LeninardoOpts) {
+    super({ ownerID: opts.ownerID });
+    this.token = opts.token!;
   }
 
   private commandHandler = new CommandHandler(this, {
@@ -17,14 +22,14 @@ export class LeninardoClient extends AkairoClient {
     directory: join(__dirname, "..", "listeners"),
   });
 
-  private init(): void {
+  private async init(): Promise<void> {
     this.commandHandler.useListenerHandler(this.listenerHandler);
     this.commandHandler.loadAll();
     this.listenerHandler.loadAll();
   }
 
-  public start(): Promise<string> {
-    this.init();
-    return this.login(this.token);
+  public async start(): Promise<string> {
+    await this.init();
+    return this.login(this.token!);
   }
 }
