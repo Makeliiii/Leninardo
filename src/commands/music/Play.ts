@@ -1,6 +1,7 @@
 import { Command } from 'discord-akairo';
-import { Message, VoiceConnection } from 'discord.js';
+import { Collection, Message, VoiceConnection } from 'discord.js';
 import isUrl from 'is-url';
+import { Video } from 'popyt';
 import ytdl from 'ytdl-core';
 import { Song } from '../../interfaces/Song';
 import { searchByString, searchByUrl } from '../../utils/youtube';
@@ -24,18 +25,14 @@ export default class Play extends Command {
 
   async join(msg: Message): Promise<VoiceConnection | undefined> {
     const channel = msg.member?.voice.channel;
-
-    try {
-      return channel?.join();
-    } catch (error) {
-      msg.channel.send('You must be in a voice channel to play music dipshit!');
-    }
+    return channel?.join();
   }
 
   async dlAudio(song: Song) {
     return ytdl(song.url, { filter: 'audioonly' });
   }
 
+  // babbys first recursion
   async play(msg: Message, song: Song) {
     const queue = this.client.queue;
 
@@ -47,8 +44,15 @@ export default class Play extends Command {
 
     await this.join(msg).then(
       async (connection: VoiceConnection | undefined) => {
-        if (!connection) return msg.channel.send("I'm retarded");
+        // foul language === check
+        if (!connection)
+          return msg.channel.send(
+            'How about you join a focken voice channel before playing music dumb cunt?!',
+          );
+
+        // dl that sweet audio pog
         const audio = await this.dlAudio(song);
+
         connection
           .play(audio)
           .on('finish', () => {
@@ -89,7 +93,47 @@ export default class Play extends Command {
       });
     } else {
       await searchByString(url).then(async (videos) => {
-        console.log(videos);
+        const songs: Song[] = videos.results.map((video: Video) => {
+          return {
+            url: video.url,
+            title: video.title,
+          };
+        });
+
+        const responses: number[] = [1, 2, 3, 4, 5];
+        // i have no idea what type the response is i think i'm dumb
+        const filter = (response: any): boolean => {
+          return responses.some((res) => res.toString() === response.content);
+        };
+
+        msg.channel
+          .send(
+            `**Found these videos:**\n\n1. **${songs[0].title}**\n2. **${songs[1].title}**\n3. **${songs[2].title}**\n4. **${songs[3].title}**\n5. **${songs[4].title}**\n`,
+          )
+          .then(() => {
+            msg.channel
+              .awaitMessages(filter, { max: 1, time: 15000, errors: ['time'] })
+              .then(async (collected: Collection<string, Message>) => {
+                console.log(collected);
+
+                // this seems retarded but i am a troglodyte so it's ok let's go
+                const song: Song = {
+                  url:
+                    songs[parseInt(collected.first()?.content || '') - 1].url,
+                  title:
+                    songs[parseInt(collected.first()?.content || '') - 1].title,
+                };
+
+                if (serverQue.length === 0) {
+                  serverQue.push(song);
+                  return this.play(msg, serverQue[0]);
+                } else {
+                  serverQue.push(song);
+                  console.log(serverQue);
+                  msg.channel.send(`Added **${song.title}** to the queue!`);
+                }
+              });
+          });
       });
     }
   }
