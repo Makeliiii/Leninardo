@@ -1,5 +1,5 @@
-import LeninardoClient from "./client";
-import * as dotenv from "dotenv";
+import LeninardoClient from './client';
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 const ownerID = process.env.OWNERID;

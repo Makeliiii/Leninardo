@@ -1,5 +1,5 @@
-import { AkairoClient, CommandHandler, ListenerHandler } from "discord-akairo";
-import { join } from "path";
+import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
+import { join } from 'path';
 
 interface LeninardoOpts {
   ownerID?: string;
@@ -13,13 +13,13 @@ export default class LeninardoClient extends AkairoClient {
   }
 
   private commandHandler = new CommandHandler(this, {
-    directory: join(__dirname, "..", "commands"),
-    prefix: "!",
+    directory: join(__dirname, '..', 'commands'),
+    prefix: '!',
     defaultCooldown: 1000,
   });
 
   private listenerHandler = new ListenerHandler(this, {
-    directory: join(__dirname, "..", "listeners"),
+    directory: join(__dirname, '..', 'listeners'),
   });
 
   private async init(): Promise<void> {

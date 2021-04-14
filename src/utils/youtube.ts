@@ -1,5 +1,5 @@
-import { Video, YouTube } from "popyt";
-import isUrl from "is-url";
+import { Video, YouTube } from 'popyt';
+import isUrl from 'is-url';
 
 const yt = new YouTube(process.env.YOUTUBE);
 
