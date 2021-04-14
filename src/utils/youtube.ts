@@ -1,16 +1,17 @@
-import { YouTube } from 'popyt';
-import isUrl from 'is-url';
+import { Video, YouTube } from 'popyt';
 
 const yt = new YouTube(process.env.YOUTUBE);
 
-export const search = async (videoUrl: string): Promise<any> => {
-  try {
-    if (isUrl(videoUrl)) {
-      return await yt.getVideo(videoUrl);
-    } else {
-      return await yt.searchVideos(videoUrl, 5);
-    }
-  } catch (error) {
-    return error;
-  }
+export const searchByUrl = async (videoUrl: string): Promise<Video> => {
+  return await yt.getVideo(videoUrl);
+};
+
+export const searchByString = async (
+  videoString: string,
+): Promise<{
+  results: Video[];
+  prevPageToken: string;
+  nextPageToken: string;
+}> => {
+  return await yt.searchVideos(videoString, 5);
 };
