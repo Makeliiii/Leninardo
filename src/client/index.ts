@@ -1,6 +1,13 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
 import { join } from 'path';
 
+declare module 'discord-akairo' {
+  interface AkairoClient {
+    queue: Map<any, any>;
+    config: LeninardoOpts;
+  }
+}
+
 interface LeninardoOpts {
   ownerID?: string;
   token?: string;
@@ -10,6 +17,7 @@ export default class LeninardoClient extends AkairoClient {
   public constructor(opts: LeninardoOpts) {
     super({ ownerID: opts.ownerID });
     this.token = opts.token!;
+    this.queue = new Map();
   }
 
   private commandHandler = new CommandHandler(this, {
