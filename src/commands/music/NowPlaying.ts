@@ -14,7 +14,8 @@ export default class NowPlaying extends Command {
   async exec(msg: Message): Promise<Message> {
     const serverQue = this.client.queue;
 
-    if (!serverQue) return msg.channel.send('There is nothing playing...');
+    if (!serverQue.length)
+      return msg.channel.send('There is nothing playing...');
 
     return msg.channel.send(`Now playing: **${serverQue[0].title}**`);
   }
