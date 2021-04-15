@@ -33,6 +33,11 @@ export default class NowPlaying extends Command {
     const user = msg.member?.user;
     const userId = msg.member?.id;
 
+    if (!title || !songs)
+      return msg.channel.send(
+        'You must provide a title and song urls (youtube only for now)!',
+      );
+
     try {
       const playlist = await Playlist.create({
         user,
