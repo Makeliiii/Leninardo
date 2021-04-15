@@ -2,7 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 
 export default class Resume extends Command {
-  constructor() {
+  public constructor() {
     super('resume', {
       aliases: ['resume', 'jatka'],
       ratelimit: 1,
@@ -11,7 +11,7 @@ export default class Resume extends Command {
     });
   }
 
-  async exec(msg: Message) {
+  async exec(msg: Message): Promise<Message> {
     const channel = msg.member?.voice.channel;
     const serverQue = this.client.queue;
 

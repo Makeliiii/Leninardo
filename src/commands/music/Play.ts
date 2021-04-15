@@ -7,7 +7,7 @@ import { Song } from '../../interfaces/Song';
 import { searchByString, searchByUrl } from '../../utils/youtube';
 
 export default class Play extends Command {
-  constructor() {
+  public constructor() {
     super('play', {
       aliases: ['play', '+', 'soita', 'p'],
       ratelimit: 1,
@@ -33,7 +33,7 @@ export default class Play extends Command {
   }
 
   // babbys first recursion
-  async play(msg: Message, song: Song) {
+  async play(msg: Message, song: Song): Promise<void> {
     const queue = this.client.queue;
 
     if (!song) {
@@ -70,7 +70,10 @@ export default class Play extends Command {
     );
   }
 
-  async exec(msg: Message, { url }: { url: string }) {
+  async exec(
+    msg: Message,
+    { url }: { url: string },
+  ): Promise<Message | undefined> {
     if (!url)
       return msg.channel.send('Please provide a link or something idk?!?!?11!');
 

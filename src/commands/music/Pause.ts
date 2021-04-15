@@ -2,7 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 
 export default class Pause extends Command {
-  constructor() {
+  public constructor() {
     super('pause', {
       aliases: ['pause', 'pauseta', 'pysäytä'],
       ratelimit: 1,
@@ -11,7 +11,7 @@ export default class Pause extends Command {
     });
   }
 
-  async exec(msg: Message) {
+  async exec(msg: Message): Promise<Message> {
     const channel = msg.member?.voice.channel;
     const serverQue = this.client.queue;
 

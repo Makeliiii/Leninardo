@@ -2,7 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 
 export default class GitHub extends Command {
-  constructor() {
+  public constructor() {
     super('github', {
       aliases: ['github', 'gh', 'repo', 'repository'],
       category: 'util',
@@ -10,7 +10,7 @@ export default class GitHub extends Command {
     });
   }
 
-  async exec(msg: Message) {
+  async exec(msg: Message): Promise<Message> {
     const repo = 'https://github.com/Makeliiii/Leninardo';
     return msg.channel.send(repo);
   }
