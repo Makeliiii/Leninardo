@@ -12,7 +12,7 @@ export default class Queue extends Command {
     });
   }
 
-  async exec(msg: Message) {
+  async exec(msg: Message): Promise<Message> {
     const serverQue = this.client.queue;
 
     if (!serverQue.length)
