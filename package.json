@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "test",
+    "tsc": "tsc",
     "start": "npm run build && node dist/index.js",
     "build": "rimraf ./dist && tsc",
     "dev": "nodemon src/index.ts"
