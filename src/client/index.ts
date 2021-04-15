@@ -1,10 +1,12 @@
 import { AkairoClient, CommandHandler, ListenerHandler } from 'discord-akairo';
+import { VoiceConnection } from 'discord.js';
 import { join } from 'path';
 import { Song } from '../interfaces/Song';
 
 declare module 'discord-akairo' {
   interface AkairoClient {
     queue: Song[];
+    voiceConnection: VoiceConnection | null;
     config: LeninardoOpts;
   }
 }
@@ -35,6 +37,7 @@ export default class LeninardoClient extends AkairoClient {
     this.commandHandler.loadAll();
     this.listenerHandler.loadAll();
     this.queue = [];
+    this.voiceConnection = null;
   }
 
   public async start(): Promise<string> {

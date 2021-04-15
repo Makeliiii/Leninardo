@@ -50,10 +50,11 @@ export default class Play extends Command {
             'How about you join a focken voice channel before playing music dumb cunt?!',
           );
 
+        this.client.voiceConnection = connection;
         // dl that sweet audio pog
         const audio = await this.dlAudio(song);
 
-        connection
+        this.client.voiceConnection
           .play(audio)
           .on('finish', () => {
             queue.shift();
