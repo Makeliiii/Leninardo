@@ -1,10 +1,11 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
+import { PlaylistDocument } from '../../interfaces/PlaylistDocument';
 import { Playlist } from '../../models/Playlist';
 
 interface Args {
   title: string;
-  songs: string;
+  userId: string;
 }
 
 export default class NowPlaying extends Command {
@@ -18,8 +19,8 @@ export default class NowPlaying extends Command {
       args: [
         {
           id: 'title',
-          type: 'option',
-          flag: ['--title', '-t'],
+          type: 'string',
+          match: 'flag',
         },
         {
           id: 'userId',
@@ -30,5 +31,24 @@ export default class NowPlaying extends Command {
     });
   }
 
-  async exec(msg: Message, { title, songs }: Args): Promise<Message | void> {}
+  async findByTitle(title: string): Promise<PlaylistDocument[]> {
+    const titleRegEx = new RegExp(title, 'i');
+    return Playlist.find({ title: titleRegEx });
+  }
+
+  async exec(msg: Message, { title, userId }: Args): Promise<Message | void> {
+    let docs: PlaylistDocument[];
+
+    if (!title || !userId)
+      return msg.channel.send(
+        'You need to provide at least one search parameter. Use flag --title to search by title and/or --userId to search by user ID!',
+      );
+
+    if (title) {
+      docs = await this.findByTitle(title);
+      console.log(title);
+      console.log(title);
+      return msg.channel.send(`${docs}`);
+    }
+  }
 }
