@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
+import { PlaylistDocument } from '../interfaces/PlaylistDocument';
 
-const PlaylistSchema = new Schema({
+const PlaylistSchema = new Schema<PlaylistDocument>({
   user: {
     type: String,
     required: true,
@@ -16,4 +17,7 @@ const PlaylistSchema = new Schema({
   songs: [String],
 });
 
-export const Playlist = mongoose.model('Playlist', PlaylistSchema);
+export const Playlist = mongoose.model<PlaylistDocument>(
+  'Playlist',
+  PlaylistSchema,
+);
