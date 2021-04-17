@@ -1,5 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
+import { CreatePlaylistDto } from '../../dto/CreatePlaylistDto';
+import { PlaylistDocument } from '../../interfaces/PlaylistDocument';
 import { Playlist } from '../../models/Playlist';
 
 interface Args {
@@ -28,10 +30,23 @@ export default class NowPlaying extends Command {
     });
   }
 
-  async exec(msg: Message, { title, songs }: Args): Promise<Message | void> {
+  async createPlaylist(
+    createPlaylistDto: CreatePlaylistDto,
+  ): Promise<PlaylistDocument> {
+    const playlist = await Playlist.create(createPlaylistDto);
+    return playlist.save();
+  }
+
+  async exec(msg: Message, { title, songs }: Args): Promise<Message> {
     const songsArr: string[] = songs.split(' ');
-    const user = msg.member?.user;
-    const userId = msg.member?.id;
+    const user = msg.member!.user;
+    const userId = msg.member!.id;
+    const playlist: CreatePlaylistDto = {
+      user,
+      userId,
+      title,
+      songs: songsArr,
+    };
 
     if (!title || !songs)
       return msg.channel.send(
@@ -39,21 +54,11 @@ export default class NowPlaying extends Command {
       );
 
     try {
-      const playlist = await Playlist.create({
-        user,
-        userId,
-        title,
-        songs: songsArr,
-      });
-
-      await playlist
-        .save()
-        .then(() => {
-          return msg.channel.send(`Playlist **${title}** created!`);
-        })
-        .catch((err) => {
-          return msg.channel.send(`Error: ${err}`);
-        });
+      return await this.createPlaylist(playlist).then(
+        (playlist: PlaylistDocument) => {
+          return msg.channel.send(`Created playlist: ${playlist.title}`);
+        },
+      );
     } catch (error) {
       return msg.channel.send(`Error: ${error}`);
     }
