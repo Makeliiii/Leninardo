@@ -9,8 +9,7 @@ export default class DeletePlaylist extends Command {
       aliases: ['dp', 'delete', 'deleteplaylist', 'deletep'],
       ratelimit: 1,
       category: 'music',
-      description:
-        'List all playlists from the database or by the specified flag.',
+      description: 'Delete a playlist by a title.',
       args: [
         {
           id: 'title',
