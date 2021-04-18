@@ -20,12 +20,24 @@ export default class DeletePlaylist extends Command {
     });
   }
 
-  async findByTitleAndDelete(title: string, userId: string): Promise<void> {
+  async findByTitleAndDelete(
+    title: string,
+    userId: string,
+  ): Promise<string | PlaylistDocument> {
     const titleRegEx = new RegExp(title, 'i');
-    Playlist.findOneAndDelete({ title: titleRegEx, userId });
+    const found = await Playlist.findOneAndDelete({
+      title: titleRegEx,
+      userId,
+    });
+
+    if (!found) {
+      return "Could not delete playlist. Are you sure you're the owner of the playlist?";
+    }
+
+    return found;
   }
 
-  async exec(msg: Message, { title }: { title: string }) {
+  async exec(msg: Message, { title }: { title: string }): Promise<Message> {
     if (!title)
       return msg.channel.send(
         'Provide the title of the playlist you want to delete!',
@@ -33,12 +45,16 @@ export default class DeletePlaylist extends Command {
 
     const userId = msg.member!.id;
 
-    await this.findByTitleAndDelete(title, userId)
-      .then(() => {
-        console.log(`Success:`);
+    return await this.findByTitleAndDelete(title, userId)
+      .then((asd) => {
+        if (typeof asd === 'string') {
+          return msg.channel.send(asd);
+        } else {
+          return msg.channel.send(`Deleted playlist ${asd.title}.`);
+        }
       })
       .catch((err) => {
-        console.log(`Error: ${err}`);
+        return msg.channel.send(`Error: ${err}`);
       });
   }
 }
