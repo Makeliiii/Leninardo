@@ -9,7 +9,7 @@ interface Args {
   songs: string;
 }
 
-export default class NowPlaying extends Command {
+export default class CreatePlaylist extends Command {
   public constructor() {
     super('createplaylist', {
       aliases: ['cp', 'create', 'createplaylist', 'createp'],

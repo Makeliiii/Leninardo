@@ -8,7 +8,7 @@ interface Args {
   userId: string;
 }
 
-export default class NowPlaying extends Command {
+export default class ListPlaylists extends Command {
   public constructor() {
     super('listplaylists', {
       aliases: ['lp', 'list', 'listplaylists', 'listp'],
