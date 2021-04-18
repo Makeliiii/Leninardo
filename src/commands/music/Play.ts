@@ -91,7 +91,6 @@ export default class Play extends Command {
           return this.play(msg, serverQue[0]);
         } else {
           serverQue.push(song);
-          console.log(serverQue);
           msg.channel.send(`Added **${song.title}** to the queue!`);
         }
       });
@@ -118,8 +117,6 @@ export default class Play extends Command {
             msg.channel
               .awaitMessages(filter, { max: 1, time: 15000, errors: ['time'] })
               .then(async (collected: Collection<string, Message>) => {
-                console.log(collected);
-
                 // this seems retarded but i am a troglodyte so it's ok let's go
                 const song: Song = {
                   url:
@@ -133,7 +130,6 @@ export default class Play extends Command {
                   return this.play(msg, serverQue[0]);
                 } else {
                   serverQue.push(song);
-                  console.log(serverQue);
                   msg.channel.send(`Added **${song.title}** to the queue!`);
                 }
               });
