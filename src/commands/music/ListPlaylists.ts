@@ -19,35 +19,58 @@ export default class NowPlaying extends Command {
       args: [
         {
           id: 'title',
-          type: 'string',
-          match: 'flag',
+          match: 'option',
+          flag: ['--title', '-t'],
         },
         {
           id: 'userId',
-          type: 'option',
+          match: 'option',
           flag: ['--userId', '-id'],
         },
       ],
     });
   }
 
-  async findByTitle(title: string): Promise<PlaylistDocument[]> {
+  async findByTitleAndId(title: string, userId: string) {
     const titleRegEx = new RegExp(title, 'i');
-    return Playlist.find({ title: titleRegEx });
+    const userIdRegEx = new RegExp(userId, 'i');
+
+    return Playlist.find(
+      { title: titleRegEx, userId: userIdRegEx },
+      { _id: 0, __v: 0 },
+    );
   }
 
-  async exec(msg: Message, { title, userId }: Args): Promise<Message | void> {
+  async findByTitle(title: string): Promise<PlaylistDocument[]> {
+    const titleRegEx = new RegExp(title, 'i');
+    return Playlist.find({ title: titleRegEx }, { _id: 0, __v: 0 });
+  }
+
+  async findByUserId(userId: string): Promise<PlaylistDocument[]> {
+    const userIdRegEx = new RegExp(userId, 'i');
+    return Playlist.find({ userId: userIdRegEx }, { _id: 0, __v: 0 });
+  }
+
+  async exec(msg: Message, { title, userId }: Args) {
     let docs: PlaylistDocument[];
 
-    if (!title || !userId)
+    if (!title && !userId)
       return msg.channel.send(
         'You need to provide at least one search parameter. Use flag --title to search by title and/or --userId to search by user ID!',
       );
 
+    if (title && userId) {
+      docs = await this.findByTitleAndId(title, userId);
+      return msg.channel.send(`${docs}`);
+    }
+
     if (title) {
       docs = await this.findByTitle(title);
-      console.log(title);
-      console.log(title);
+      return msg.channel.send(`${docs}`);
+    }
+
+    if (userId) {
+      docs = await this.findByUserId(userId);
       return msg.channel.send(`${docs}`);
     }
   }
