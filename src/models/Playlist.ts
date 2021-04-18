@@ -13,6 +13,7 @@ const PlaylistSchema = new Schema<PlaylistDocument>({
   title: {
     type: String,
     required: true,
+    unique: true,
   },
   songs: [String],
 });
