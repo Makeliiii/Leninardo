@@ -31,7 +31,10 @@ export default class ListPlaylists extends Command {
     });
   }
 
-  async findByTitleAndId(title: string, userId: string) {
+  async findByTitleAndId(
+    title: string,
+    userId: string,
+  ): Promise<PlaylistDocument[]> {
     const titleRegEx = new RegExp(title, 'i');
     const userIdRegEx = new RegExp(userId, 'i');
 
