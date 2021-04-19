@@ -4,7 +4,13 @@ import isUrl from 'is-url';
 import { Video } from 'popyt';
 import ytdl from 'ytdl-core';
 import { Song } from '../../interfaces/Song';
+import { findBySpecificTitle } from '../../utils/mongoOperations';
 import { searchByString, searchByUrl } from '../../utils/youtube';
+
+interface Args {
+  url: string;
+  playlist: string;
+}
 
 export default class Play extends Command {
   public constructor() {
@@ -12,12 +18,19 @@ export default class Play extends Command {
       aliases: ['play', '+', 'soita', 'p'],
       ratelimit: 1,
       category: 'music',
-      description: 'Play a video from youtube.',
+      description:
+        'Play a video from youtube or start playing from a playlist by providing the flag --playlist and the title of the playlist.',
       args: [
         {
           id: 'url',
           type: 'string',
           match: 'content',
+        },
+        {
+          id: 'playlist',
+          type: 'string',
+          match: 'option',
+          flag: ['--playlist', '-p'],
         },
       ],
     });
@@ -70,14 +83,30 @@ export default class Play extends Command {
     );
   }
 
-  async exec(
-    msg: Message,
-    { url }: { url: string },
-  ): Promise<Message | undefined> {
+  async exec(msg: Message, { url, playlist }: Args): Promise<void | Message> {
+    const serverQue = this.client.queue;
+
+    if (playlist) {
+      const doc = await findBySpecificTitle(playlist);
+
+      if (!doc)
+        return msg.channel.send(
+          `Could not find playlist with title: ${playlist}`,
+        );
+
+      for (const song of doc.songs) {
+        const newSong: Song = {
+          title: song.title,
+          url: song.url,
+        };
+        serverQue.push(newSong);
+      }
+
+      return this.play(msg, serverQue[0]);
+    }
+
     if (!url)
       return msg.channel.send('Please provide a link or something idk?!?!?11!');
-
-    const serverQue = this.client.queue;
 
     if (isUrl(url)) {
       await searchByUrl(url).then(async (video) => {
