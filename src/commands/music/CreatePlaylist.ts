@@ -2,7 +2,9 @@ import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 import { CreatePlaylistDto } from '../../dto/CreatePlaylistDto';
 import { PlaylistDocument } from '../../interfaces/PlaylistDocument';
+import { Song } from '../../interfaces/Song';
 import { createPlaylist } from '../../utils/mongoOperations';
+import { searchByUrl } from '../../utils/youtube';
 
 interface Args {
   title: string;
@@ -31,14 +33,27 @@ export default class CreatePlaylist extends Command {
   }
 
   async exec(msg: Message, { title, songs }: Args): Promise<Message> {
-    const songsArr: string[] = songs.split(' ');
+    const songsArr = songs.split(' ');
+    const songsMap: Song[] = [];
     const user = msg.member!.user;
     const userId = msg.member!.id;
+
+    for (const song of songsArr) {
+      await searchByUrl(song).then((song) => {
+        const newSong: Song = {
+          title: song.title,
+          url: song.url,
+        };
+
+        songsMap.push(newSong);
+      });
+    }
+
     const playlist: CreatePlaylistDto = {
       user,
       userId,
       title,
-      songs: songsArr,
+      songs: songsMap,
     };
 
     if (!title || !songs)
