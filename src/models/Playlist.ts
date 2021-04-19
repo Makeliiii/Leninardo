@@ -1,17 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { PlaylistDocument } from '../interfaces/PlaylistDocument';
-import { SongDocument } from '../interfaces/SongDocument';
-
-const SongSchema = new Schema<SongDocument>({
-  url: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-});
+import { SongSchema } from './Song';
 
 const PlaylistSchema = new Schema<PlaylistDocument>({
   user: {
