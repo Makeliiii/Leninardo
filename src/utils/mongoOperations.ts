@@ -20,6 +20,12 @@ const findByTitle = async (title: string): Promise<PlaylistDocument[]> => {
   return Playlist.find({ title: titleRegEx }, { _id: 0, __v: 0 });
 };
 
+const findBySpecificTitle = async (
+  title: string,
+): Promise<PlaylistDocument | null> => {
+  return Playlist.findOne({ title }, { _id: 0, __v: 0 });
+};
+
 const findByUserId = async (userId: string): Promise<PlaylistDocument[]> => {
   const userIdRegEx = new RegExp(userId, 'i');
   return Playlist.find({ userId: userIdRegEx }, { _id: 0, __v: 0 });
@@ -52,6 +58,7 @@ const findByTitleAndDelete = async (
 export {
   findByTitleAndId,
   findByTitle,
+  findBySpecificTitle,
   findByUserId,
   createPlaylist,
   findByTitleAndDelete,
