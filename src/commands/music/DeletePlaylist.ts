@@ -1,7 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
-import { PlaylistDocument } from '../../interfaces/PlaylistDocument';
-import { Playlist } from '../../models/Playlist';
+import { findByTitleAndDelete } from '../../utils/mongoOperations';
 
 export default class DeletePlaylist extends Command {
   public constructor() {
@@ -19,23 +18,6 @@ export default class DeletePlaylist extends Command {
     });
   }
 
-  async findByTitleAndDelete(
-    title: string,
-    userId: string,
-  ): Promise<string | PlaylistDocument> {
-    const titleRegEx = new RegExp(title, 'i');
-    const found = await Playlist.findOneAndDelete({
-      title: titleRegEx,
-      userId,
-    });
-
-    if (!found) {
-      return "Could not delete playlist. Are you sure you're the owner of the playlist?";
-    }
-
-    return found;
-  }
-
   async exec(msg: Message, { title }: { title: string }): Promise<Message> {
     if (!title)
       return msg.channel.send(
@@ -44,7 +26,7 @@ export default class DeletePlaylist extends Command {
 
     const userId = msg.member!.id;
 
-    return await this.findByTitleAndDelete(title, userId)
+    return await findByTitleAndDelete(title, userId)
       .then((asd) => {
         if (typeof asd === 'string') {
           return msg.channel.send(asd);

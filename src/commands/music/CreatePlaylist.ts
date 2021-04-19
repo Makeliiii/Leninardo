@@ -2,7 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 import { CreatePlaylistDto } from '../../dto/CreatePlaylistDto';
 import { PlaylistDocument } from '../../interfaces/PlaylistDocument';
-import { Playlist } from '../../models/Playlist';
+import { createPlaylist } from '../../utils/mongoOperations';
 
 interface Args {
   title: string;
@@ -30,13 +30,6 @@ export default class CreatePlaylist extends Command {
     });
   }
 
-  async createPlaylist(
-    createPlaylistDto: CreatePlaylistDto,
-  ): Promise<PlaylistDocument> {
-    const playlist = await Playlist.create(createPlaylistDto);
-    return playlist.save();
-  }
-
   async exec(msg: Message, { title, songs }: Args): Promise<Message> {
     const songsArr: string[] = songs.split(' ');
     const user = msg.member!.user;
@@ -54,7 +47,7 @@ export default class CreatePlaylist extends Command {
       );
 
     try {
-      return await this.createPlaylist(playlist).then(
+      return await createPlaylist(playlist).then(
         (playlist: PlaylistDocument) => {
           return msg.channel.send(`Created playlist: ${playlist.title}`);
         },

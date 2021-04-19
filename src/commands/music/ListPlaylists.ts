@@ -1,7 +1,11 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 import { PlaylistDocument } from '../../interfaces/PlaylistDocument';
-import { Playlist } from '../../models/Playlist';
+import {
+  findByTitle,
+  findByTitleAndId,
+  findByUserId,
+} from '../../utils/mongoOperations';
 
 interface Args {
   title: string;
@@ -31,29 +35,6 @@ export default class ListPlaylists extends Command {
     });
   }
 
-  async findByTitleAndId(
-    title: string,
-    userId: string,
-  ): Promise<PlaylistDocument[]> {
-    const titleRegEx = new RegExp(title, 'i');
-    const userIdRegEx = new RegExp(userId, 'i');
-
-    return Playlist.find(
-      { title: titleRegEx, userId: userIdRegEx },
-      { _id: 0, __v: 0 },
-    );
-  }
-
-  async findByTitle(title: string): Promise<PlaylistDocument[]> {
-    const titleRegEx = new RegExp(title, 'i');
-    return Playlist.find({ title: titleRegEx }, { _id: 0, __v: 0 });
-  }
-
-  async findByUserId(userId: string): Promise<PlaylistDocument[]> {
-    const userIdRegEx = new RegExp(userId, 'i');
-    return Playlist.find({ userId: userIdRegEx }, { _id: 0, __v: 0 });
-  }
-
   async exec(msg: Message, { title, userId }: Args) {
     let docs: PlaylistDocument[];
 
@@ -63,17 +44,17 @@ export default class ListPlaylists extends Command {
       );
 
     if (title && userId) {
-      docs = await this.findByTitleAndId(title, userId);
+      docs = await findByTitleAndId(title, userId);
       return msg.channel.send(`${docs}`);
     }
 
     if (title) {
-      docs = await this.findByTitle(title);
+      docs = await findByTitle(title);
       return msg.channel.send(`${docs}`);
     }
 
     if (userId) {
-      docs = await this.findByUserId(userId);
+      docs = await findByUserId(userId);
       return msg.channel.send(`${docs}`);
     }
   }
