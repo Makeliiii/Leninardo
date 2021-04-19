@@ -1,6 +1,6 @@
-import { Document } from 'mongoose';
+import { Types } from 'mongoose';
 
-export interface SongDocument extends Document {
+export interface SongDocument extends Types.Subdocument {
   url: string;
   title: string;
 }
