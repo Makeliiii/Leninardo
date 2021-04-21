@@ -85,6 +85,28 @@ const findByTitleAndDelete = async (
   return found;
 };
 
+const findByTitleAndDeleteSong = async (
+  title: string,
+  index: number,
+): Promise<string | PlaylistDocument> => {
+  console.log(index);
+  return await Playlist.findOneAndUpdate({ title }, {}, { upsert: false })
+    .then(async (playlist) => {
+      if (!playlist)
+        return `Could not find a playlist with the title: ${title}`;
+      if (index > playlist.songs.length)
+        return `Ain't that number a bit too big?`;
+      if (index < 0) return `Index can't be zero or negative!`;
+
+      playlist.songs.splice(index, 1);
+      playlist.save();
+      return playlist;
+    })
+    .catch((err) => {
+      return `Vituiks meni: ${err}`;
+    });
+};
+
 export {
   findByTitleAndId,
   findByTitle,
@@ -93,4 +115,5 @@ export {
   createPlaylist,
   findByTitleAndUpdate,
   findByTitleAndDelete,
+  findByTitleAndDeleteSong,
 };

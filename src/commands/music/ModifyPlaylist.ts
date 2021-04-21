@@ -1,6 +1,9 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
-import { findByTitleAndUpdate } from '../../utils/mongoOperations';
+import {
+  findByTitleAndDeleteSong,
+  findByTitleAndUpdate,
+} from '../../utils/mongoOperations';
 
 interface Args {
   title: string;
@@ -55,6 +58,18 @@ export default class ModifyPlaylist extends Command {
         if (typeof playlist === 'string') return msg.channel.send(playlist);
         return msg.channel.send(`Added songs to playlist ${playlist.title}`);
       });
+    }
+
+    if (remove) {
+      const index = parseInt(content);
+      return await findByTitleAndDeleteSong(title, index - 1).then(
+        (playlist) => {
+          if (typeof playlist == 'string') return msg.channel.send(playlist);
+          return msg.channel.send(
+            `Removed song at index: ${index} from playlist: ${playlist.title}`,
+          );
+        },
+      );
     }
   }
 }
