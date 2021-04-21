@@ -1,6 +1,8 @@
 import { PlaylistDocument } from '../interfaces/PlaylistDocument';
 import { Playlist } from '../models/Playlist';
 import { CreatePlaylistDto } from '../dto/CreatePlaylistDto';
+import { searchByUrl } from './youtube';
+import { SongDocument } from '../interfaces/SongDocument';
 
 const findByTitleAndId = async (
   title: string,
@@ -38,6 +40,34 @@ const createPlaylist = async (
   return playlist.save();
 };
 
+const findByTitleAndUpdate = async (
+  title: string,
+  songs: string[],
+): Promise<string | PlaylistDocument> => {
+  return await Playlist.findOneAndUpdate({ title }, {}, { upsert: false })
+    .then(async (playlist) => {
+      if (!playlist)
+        return `Could not find a playlist with the title: ${title}`;
+
+      for (const song of songs) {
+        await searchByUrl(song).then(async (song) => {
+          const newSong = <SongDocument>{
+            title: song.title,
+            url: song.url,
+          };
+
+          playlist.songs.push(newSong);
+        });
+      }
+
+      playlist.save();
+      return playlist;
+    })
+    .catch((err) => {
+      return `Vituiks meni: ${err}`;
+    });
+};
+
 const findByTitleAndDelete = async (
   title: string,
   userId: string,
@@ -61,5 +91,6 @@ export {
   findBySpecificTitle,
   findByUserId,
   createPlaylist,
+  findByTitleAndUpdate,
   findByTitleAndDelete,
 };
