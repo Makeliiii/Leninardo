@@ -5,5 +5,6 @@ export const connect = async (mongoUri: string) => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
+    useFindAndModify: false,
   });
 };
