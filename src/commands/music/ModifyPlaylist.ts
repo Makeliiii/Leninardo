@@ -2,6 +2,7 @@ import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 import {
   findByTitleAndDeleteSong,
+  findByTitleAndSort,
   findByTitleAndUpdate,
 } from '../../utils/mongoOperations';
 
@@ -70,6 +71,20 @@ export default class ModifyPlaylist extends Command {
           );
         },
       );
+    }
+
+    if (sort) {
+      const indexes = content.split(' ');
+
+      if (indexes.length > 2)
+        return msg.channel.send('Only two indexes allowed!');
+
+      const x = parseInt(indexes[0]);
+      const y = parseInt(indexes[1]);
+      return await findByTitleAndSort(title, x - 1, y - 1).then((playlist) => {
+        if (typeof playlist == 'string') return msg.channel.send(playlist);
+        return msg.channel.send(`Swapped songs at indexes: ${x} and ${y}`);
+      });
     }
   }
 }
