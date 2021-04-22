@@ -1,4 +1,7 @@
 import { Video, YouTube } from 'popyt';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const yt = new YouTube(process.env.YOUTUBE);
 
