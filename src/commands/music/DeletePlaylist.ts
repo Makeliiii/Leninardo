@@ -1,6 +1,5 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
-import { findByTitleAndDelete } from '../../utils/mongoOperations';
 
 export default class DeletePlaylist extends Command {
   public constructor() {
@@ -26,7 +25,8 @@ export default class DeletePlaylist extends Command {
 
     const userId = msg.member!.id;
 
-    return await findByTitleAndDelete(title, userId)
+    return await this.client.playlist
+      .findByTitleAndDelete(title, userId)
       .then((asd) => {
         if (typeof asd === 'string') {
           return msg.channel.send(asd);

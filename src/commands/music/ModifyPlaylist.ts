@@ -1,10 +1,5 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
-import {
-  findByTitleAndDeleteSong,
-  //findByTitleAndSort,
-  findByTitleAndUpdate,
-} from '../../utils/mongoOperations';
 
 interface Args {
   title: string;
@@ -55,22 +50,24 @@ export default class ModifyPlaylist extends Command {
 
     if (add) {
       const songs = content.split(' ');
-      return await findByTitleAndUpdate(title, songs).then((playlist) => {
-        if (typeof playlist === 'string') return msg.channel.send(playlist);
-        return msg.channel.send(`Added songs to playlist ${playlist.title}`);
-      });
+      return await this.client.playlist
+        .findByTitleAndUpdate(title, songs)
+        .then((playlist) => {
+          if (typeof playlist === 'string') return msg.channel.send(playlist);
+          return msg.channel.send(`Added songs to playlist ${playlist.title}`);
+        });
     }
 
     if (remove) {
       const index = parseInt(content);
-      return await findByTitleAndDeleteSong(title, index - 1).then(
-        (playlist) => {
+      return await this.client.playlist
+        .findByTitleAndDeleteSong(title, index - 1)
+        .then((playlist) => {
           if (typeof playlist == 'string') return msg.channel.send(playlist);
           return msg.channel.send(
             `Removed song at index: ${index} from playlist: ${playlist.title}`,
           );
-        },
-      );
+        });
     }
 
     /* if (sort) {
@@ -81,7 +78,7 @@ export default class ModifyPlaylist extends Command {
 
       const x = parseInt(indexes[0]);
       const y = parseInt(indexes[1]);
-      return await findByTitleAndSort(title, x - 1, y - 1).then((playlist) => {
+      return await this.client.playlist.findByTitleAndSort(title, x - 1, y - 1).then((playlist) => {
         if (typeof playlist == 'string') return msg.channel.send(playlist);
         return msg.channel.send(`Swapped songs at indexes: ${x} and ${y}`);
       });

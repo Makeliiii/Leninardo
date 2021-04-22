@@ -1,6 +1,5 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
-import { findBySpecificTitle } from '../../utils/mongoOperations';
 
 export default class ListPlaylistSongs extends Command {
   public constructor() {
@@ -20,7 +19,7 @@ export default class ListPlaylistSongs extends Command {
 
   async exec(msg: Message, { title }: { title: string }) {
     if (!title) return msg.channel.send('Title param required.');
-    const playlist = await findBySpecificTitle(title);
+    const playlist = await this.client.playlist.findBySpecificTitle(title);
     if (!playlist) return msg.channel.send('Playlist not found!');
     const songs = playlist.songs.map((song, index) => {
       return `${index + 1}. ${song.title}\n`;

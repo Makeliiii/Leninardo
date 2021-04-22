@@ -4,7 +4,6 @@ import isUrl from 'is-url';
 import { Video } from 'popyt';
 import ytdl from 'ytdl-core';
 import { Song } from '../../interfaces/Song';
-import { findBySpecificTitle } from '../../utils/mongoOperations';
 import { searchByString, searchByUrl } from '../../utils/youtube';
 
 interface Args {
@@ -87,7 +86,7 @@ export default class Play extends Command {
     const serverQue = this.client.queue;
 
     if (playlist) {
-      const doc = await findBySpecificTitle(playlist);
+      const doc = await this.client.playlist.findBySpecificTitle(playlist);
 
       if (!doc)
         return msg.channel.send(

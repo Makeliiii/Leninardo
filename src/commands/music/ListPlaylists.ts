@@ -1,11 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
 import { PlaylistDocument } from '../../interfaces/PlaylistDocument';
-import {
-  findByTitle,
-  findByTitleAndId,
-  findByUserId,
-} from '../../utils/mongoOperations';
 
 interface Args {
   title: string;
@@ -44,17 +39,17 @@ export default class ListPlaylists extends Command {
       );
 
     if (title && userId) {
-      docs = await findByTitleAndId(title, userId);
+      docs = await this.client.playlist.findByTitleAndId(title, userId);
       return msg.channel.send(`${docs}`);
     }
 
     if (title) {
-      docs = await findByTitle(title);
+      docs = await this.client.playlist.findByTitle(title);
       return msg.channel.send(`${docs}`);
     }
 
     if (userId) {
-      docs = await findByUserId(userId);
+      docs = await this.client.playlist.findByUserId(userId);
       return msg.channel.send(`${docs}`);
     }
   }

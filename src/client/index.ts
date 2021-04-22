@@ -3,7 +3,11 @@ import { VoiceConnection } from 'discord.js';
 import { Mongoose } from 'mongoose';
 import { join } from 'path';
 import { Song } from '../interfaces/Song';
+import { Paskapost } from '../models/Paskapost';
+import { Playlist } from '../models/Playlist';
 import { connect } from '../utils/mongoConnection';
+import { PaskapostOperations } from '../utils/paskaPostOperations';
+import { PlaylistOperations } from '../utils/PlaylistOperations';
 
 declare module 'discord-akairo' {
   interface AkairoClient {
@@ -12,6 +16,8 @@ declare module 'discord-akairo' {
     mongoConnection: Mongoose | null;
     config: LeninardoOpts;
     mongoUri: string;
+    paskapost: PaskapostOperations;
+    playlist: PlaylistOperations;
   }
 }
 
@@ -27,6 +33,8 @@ export default class LeninardoClient extends AkairoClient {
     this.token = opts.token!;
     this.mongoConnection = null;
     this.mongoUri = opts.mongoUri!;
+    this.paskapost = new PaskapostOperations(Paskapost);
+    this.playlist = new PlaylistOperations(Playlist);
   }
 
   private commandHandler = new CommandHandler(this, {

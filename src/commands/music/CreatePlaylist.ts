@@ -3,7 +3,6 @@ import { Message } from 'discord.js';
 import { CreatePlaylistDto } from '../../dto/CreatePlaylistDto';
 import { PlaylistDocument } from '../../interfaces/PlaylistDocument';
 import { Song } from '../../interfaces/Song';
-import { createPlaylist } from '../../utils/mongoOperations';
 import { searchByUrl } from '../../utils/youtube';
 
 interface Args {
@@ -62,11 +61,11 @@ export default class CreatePlaylist extends Command {
       );
 
     try {
-      return await createPlaylist(playlist).then(
-        (playlist: PlaylistDocument) => {
+      return await this.client.playlist
+        .createPlaylist(playlist)
+        .then((playlist: PlaylistDocument) => {
           return msg.channel.send(`Created playlist: ${playlist.title}`);
-        },
-      );
+        });
     } catch (error) {
       return msg.channel.send(`Error: ${error}`);
     }
