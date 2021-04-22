@@ -68,27 +68,21 @@ const findByTitleAndUpdate = async (
     });
 };
 
-const findByTitleAndSort = async (title: string, x: number, y: number) => {
+/* const findByTitleAndSort = async (title: string, x: number, y: number) => {
   return await Playlist.findOneAndUpdate({ title }, {}, { upsert: false }).then(
     async (playlist) => {
       if (!playlist)
         return `Could not find a playlist with the title: ${title}`;
 
-      /*       let left = playlist.songs[x];
-      let right = playlist.songs[y];
-      const tmp = right;
-      right = left;
-      left = tmp; */
-
       const temp = playlist.songs[x];
       playlist.songs[x] = playlist.songs[y];
       playlist.songs[y] = temp;
 
-      playlist.save();
+      await playlist.save();
       return playlist;
     },
   );
-};
+}; */
 
 const findByTitleAndDelete = async (
   title: string,
@@ -135,7 +129,7 @@ export {
   findByUserId,
   createPlaylist,
   findByTitleAndUpdate,
-  findByTitleAndSort,
+  //findByTitleAndSort,
   findByTitleAndDelete,
   findByTitleAndDeleteSong,
 };
