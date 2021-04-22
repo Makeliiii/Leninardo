@@ -14,7 +14,7 @@ interface Args {
 export default class CreatePlaylist extends Command {
   public constructor() {
     super('createplaylist', {
-      aliases: ['cp', 'create', 'createplaylist', 'createp'],
+      aliases: ['cp', 'createplaylist', 'createp'],
       ratelimit: 1,
       category: 'music',
       description: 'Create a playlist.',
